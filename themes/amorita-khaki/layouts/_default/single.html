@@ -1,0 +1,16 @@
+{{ define "main" }}
+<article class="single-content">
+    <header class="page-header">
+        <h2>{{ .Title }}</h2>
+        {{ if not .Date.IsZero }}
+            <p class="post-meta" style="color: #666; font-size: 0.9rem;">
+                {{ .Date.Format "January 2, 2006" }}
+            </p>
+        {{ end }}
+    </header>
+
+    <div class="page-body">
+        {{ .Content }}
+    </div>
+</article>
+{{ end }}

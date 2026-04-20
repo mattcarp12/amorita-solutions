@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{ .Title }} | Amorita Solutions LLC</title>
+    {{ $style := resources.Get "css/style.css" | minify | fingerprint }}
+    <link rel="stylesheet" href="{{ $style.Permalink }}">
+</head>
+<body>
+    <div class="site-wrapper">
+        <aside class="sidebar">
+            <div class="logo">
+                <span class="logo-text">AS</span> 
+            </div>
+            <nav>
+                <ul>
+                    <li><a href="/">Introduction</a></li>
+                    <li><a href="/projects/">Projects</a></li>
+                    <li><a href="/blog/">Technical Blog</a></li>
+                    <li><a href="/services/">Services</a></li>
+                    <li><a href="/contact/">Contact</a></li>
+                </ul>
+            </nav>
+        </aside>
+
+        <main class="content">
+            <header class="top-bar">
+                <h1>AMORITA SOLUTIONS LLC</h1>
+                <span class="tagline">Global C2C & US Federal Contracting</span>
+            </header>
+            
+            {{ block "main" . }}{{ end }} 
+        </main>
+    </div>
+</body>
+</html>
