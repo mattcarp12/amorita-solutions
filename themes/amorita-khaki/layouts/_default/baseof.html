@@ -1,37 +1,80 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>{{ .Title }} | Amorita Solutions LLC</title>
     {{ $style := resources.Get "css/style.css" | minify | fingerprint }}
-    <link rel="stylesheet" href="{{ $style.Permalink }}">
-</head>
-<body>
+    <link rel="stylesheet" href="{{ $style.Permalink }}" />
+  </head>
+
+  <body>
     <div class="site-wrapper">
+      <header class="site-header">
+        <div class="logo-group">
+          <a href="/">
+            <img
+              src="/img/amorita-logo.svg"
+              alt="Amorita Solutions LLC Logo"
+              class="site-logo"
+            />
+          </a>
+          <div class="title-group">
+            <h1>AMORITA SOLUTIONS LLC</h1>
+            <!-- <span class="tagline">Global C2C & US Federal Contracting</span> -->
+          </div>
+        </div>
+      </header>
+
+      <div class="main-layout">
         <aside class="sidebar">
-            <div class="logo">
-                <span class="logo-text">AS</span> 
-            </div>
+          <div class="floating-nav">
             <nav>
-                <ul>
-                    <li><a href="/">Introduction</a></li>
-                    <li><a href="/projects/">Projects</a></li>
-                    <li><a href="/blog/">Technical Blog</a></li>
-                    <li><a href="/services/">Services</a></li>
-                    <li><a href="/contact/">Contact</a></li>
-                </ul>
+              <ul>
+                <li>
+                  <a
+                    href="/"
+                    class="{{ if eq .RelPermalink "/" }}active{{ end }}"
+                    >Introduction</a
+                  >
+                </li>
+                <li>
+                  <a
+                    href="/projects/"
+                    class="{{ if in .RelPermalink "/projects/" }}
+                      active
+                    {{ end }}"
+                    >Projects</a
+                  >
+                </li>
+                <li>
+                  <a
+                    href="/blog/"
+                    class="{{ if in .RelPermalink "/blog/" }}active{{ end }}"
+                    >Blog</a
+                  >
+                </li>
+                <li>
+                  <a
+                    href="/contact/"
+                    class="{{ if in .RelPermalink "/contact/" }}active{{ end }}"
+                    >Contact</a
+                  >
+                </li>
+              </ul>
             </nav>
+          </div>
         </aside>
 
         <main class="content">
-            <header class="top-bar">
-                <h1>AMORITA SOLUTIONS LLC</h1>
-                <span class="tagline">Global C2C & US Federal Contracting</span>
-            </header>
-            
-            {{ block "main" . }}{{ end }} 
+          {{ block "main" . }}{{ end }}
         </main>
+      </div>
     </div>
-</body>
+    <footer
+      style="margin-top: auto; padding: 2rem 5rem; border-top: 1px solid #dcd7ce; font-size: 0.85rem; color: #666; text-align: right;"
+    >
+      &copy; {{ now.Format "2006" }} Amorita Solutions LLC. All rights reserved.
+    </footer>
+  </body>
 </html>

@@ -1,0 +1,7 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="10 40 200 200" width="200" height="200">
+    <g transform="translate(10,10)">
+        <text x="83" y="160" font-family="'Montserrat', sans-serif" font-weight="600" font-size="180" fill="#7ca887" opacity="0.6" letter-spacing="-8">S</text>
+
+        <text x="0" y="160" font-family="'Montserrat', sans-serif" font-weight="800" font-size="180" fill="#7ca887" letter-spacing="-8">A</text>
+    </g>
+</svg>
