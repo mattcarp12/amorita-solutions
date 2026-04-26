@@ -2,9 +2,6 @@ baseURL = 'https://amoritasolutions.com/'
 languageCode = 'en-us'
 title = 'Amorita Solutions LLC'
 
-# We leave theme blank because we built our custom layout in layouts/
-theme = 'amorita-khaki' 
-
 # Disable injecting default generator meta tags for a cleaner head
 disableHugoGeneratorInject = true
 

@@ -1,0 +1,49 @@
+{{ define "main" }}
+  <div class="list-content">
+    <h2>{{ .Title }}</h2>
+
+    {{ .Content }}
+
+
+    <ul
+      class="directory-list"
+      style="list-style-type: none; padding-left: 0; margin-top: 2rem;"
+    >
+      {{ range .Pages }}
+        <li
+          style="margin-bottom: 1.5rem; padding-bottom: 1rem; border-bottom: 1px solid #dcd7ce;"
+        >
+          <h3 style="margin: 0 0 0.5rem 0;">
+            <a
+              href="{{ .Permalink }}"
+              style="text-decoration: none; color: var(--lacoste-green);"
+            >
+              {{ .Title }}
+            </a>
+          </h3>
+
+          {{ if not .Date.IsZero }}
+            <span
+              style="font-size: 0.85rem; color: #666; display: block; margin-bottom: 0.5rem;"
+            >
+              {{ .Date.Format "Jan 2, 2006" }}
+            </span>
+          {{ end }}
+
+
+          <p
+            style="margin-top: 0.5rem; font-size: 0.95rem; line-height: 1.5; color: var(--text-main);"
+          >
+            {{ .Summary }}
+          </p>
+
+          <!-- <a
+            href="{{ .Permalink }}"
+            style="font-size: 0.85rem; font-weight: 600; color: #888; text-transform: uppercase; letter-spacing: 0.5px;"
+            >Read Article &rarr;</a
+          > -->
+        </li>
+      {{ end }}
+    </ul>
+  </div>
+{{ end }}

@@ -35,9 +35,17 @@
                   <a
                     href="/"
                     class="{{ if eq .RelPermalink "/" }}active{{ end }}"
-                    >Introduction</a
+                    >Home</a
                   >
                 </li>
+                <li>
+                  <a
+                    href="/about/"
+                    class="{{ if eq .RelPermalink "/about/" }}active{{ end }}"
+                    >About</a
+                  >
+                </li>
+
                 <li>
                   <a
                     href="/projects/"
