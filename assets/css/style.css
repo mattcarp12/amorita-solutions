@@ -169,3 +169,20 @@ nav a.active {
     transform: translateY(-2px);
     box-shadow: 0 6px 12px rgba(0, 0, 0, 0.08);
 }
+
+/* About page photo */
+.about-photo {
+    float: left;
+    width: 140px;
+    height: 140px;
+    border-radius: 50%;
+    object-fit: cover;
+    border: 3px solid var(--lacoste-green);
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.08);
+    margin: 0.25rem 2rem 1rem 0;
+}
+
+/* Clear float after the intro section */
+.content hr {
+    clear: both;
+}

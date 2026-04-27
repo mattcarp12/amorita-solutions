@@ -1,35 +1,41 @@
 ---
-title: "Introduction"
+title: "Home"
 date: 2026-04-19
 draft: false
 ---
 
-## Welcome to Amorita Solutions LLC
+## Matthew Carpenter
 
-### Introduction
+Senior software engineer with 10+ years of professional experience spanning backend systems, cloud infrastructure, machine learning, actuarial modeling, and embedded systems. Co-founded an AI-powered industrial monitoring startup and delivered engineering work at Amazon, Comcast, and Intuit. Holds CCNA and Security+ certifications, as well as ACAS and CSPA actuarial designations.
 
-Amorita Solutions provides highly specialized software engineering and systems architecture. The practice is structured to engage with complex technical challenges across a variety of operational models, including US Federal Government contracting, direct C2C partnerships (domestic and international), and sustained open-source stewardship. Traditional strategic employment engagements are also considered.
+---
 
 ### Featured Projects
 
 {{< card-grid >}}
-  
-  {{< card title="eBPF Pod Monitoring" >}}
-  Kernel-level Kubernetes sovereignty logic utilizing Tetragon to abstract kernel complexity for robust runtime security.
-  {{< /card >}}
 
-  {{< card title="GitOps EKS Deployment" >}}
-  Automated AWS EKS cluster provisioning and management workflows utilizing Terraform, Helm, and ArgoCD.
-  {{< /card >}}
+{{< card title="Sovereign Sensor" repo="https://github.com/mattcarp12/sovereign-sensor" >}}
+eBPF-powered Kubernetes Operator for runtime egress monitoring, policy enforcement,
+and pod-level alerting. Built to abstract kernel complexity without sacrificing observability.
+{{< /card >}}
 
-  {{< card title="Federal Policy Engine" >}}
-  Strict compliance policy enforcement utilizing Rego, Conftest, and Gatekeeper tailored for US Federal Government requirements.
-  {{< /card >}}
+{{< card title="DNS Radar" repo="https://github.com/mattcarp12/dns-radar" >}}
+Open source DNS tunneling detector. Analyzes DNS query patterns to identify covert
+data exfiltration channels — useful in both enterprise security and federal compliance contexts.
+{{< /card >}}
+
+{{< card title="Open Source Contributions" >}}
+Active contributor to <a href="https://github.com/kube-vip/kube-vip" target="_blank" rel="noopener noreferrer">kube-vip</a>,
+<a href="https://github.com/external-secrets/external-secrets" target="_blank" rel="noopener noreferrer">external-secrets</a>,
+and <a href="https://github.com/aquasecurity/trivy" target="_blank" rel="noopener noreferrer">trivy</a> —
+widely-used projects in the Kubernetes and cloud-native security ecosystem.
+{{< /card >}}
 
 {{< /card-grid >}}
 
-### Latest Blog Posts
+<!-- ### Latest Blog Posts -->
 
 ---
-
-[Explore our Projects](/projects/) | [Read the Technical Blog](/blog/) | [Contact](/contact/)
+ 
+ [About](/about/) | [Projects](/projects/) | [Contact](/contact/)
+<!-- [About](/about/) | [Projects](/projects/) | [Blog](/blog/) | [Contact](/contact/) -->
