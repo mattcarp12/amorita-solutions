@@ -263,3 +263,31 @@ nav a.active {
         padding: 2rem 5% 0 5%;
     }
 }
+
+/* Standard Markdown Table Styling */
+table {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 2rem 0;
+    background-color: var(--card-bg);
+    border-radius: 8px;
+    overflow: hidden; /* Keeps the rounded corners on the background */
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.04);
+}
+
+th, td {
+    padding: 1rem;
+    text-align: left;
+    border: 1px solid #dcd7ce; /* Adds the gridlines */
+}
+
+th {
+    background-color: rgba(124, 168, 135, 0.1); /* Very light tint of your green */
+    font-weight: 600;
+    color: var(--lacoste-green);
+}
+
+/* Optional: Zebra striping for easier reading */
+tr:nth-child(even) {
+    background-color: #f9f8f6; 
+}
