@@ -55,13 +55,13 @@
                     >Projects</a
                   >
                 </li>
-                <!-- <li>
+                <li>
                   <a
                     href="/blog/"
                     class="{{ if in .RelPermalink "/blog/" }}active{{ end }}"
                     >Blog</a
                   >
-                </li> -->
+                </li>
                 <li>
                   <a
                     href="/contact/"
@@ -79,10 +79,15 @@
         </main>
       </div>
     </div>
-    <footer
-      style="margin-top: auto; padding: 2rem 5rem; border-top: 1px solid #dcd7ce; font-size: 0.85rem; color: #666; text-align: right;"
+    {{ partial "footer.html" . }}
+    <div
+      id="lightbox-overlay"
+      class="lightbox-overlay"
+      onclick="closeLightbox()"
     >
-      &copy; {{ now.Format "2006" }} Amorita Solutions LLC. All rights reserved.
-    </footer>
+      <span class="lightbox-close">&times;</span>
+      <img class="lightbox-content" id="lightbox-img" />
+      <div id="lightbox-caption"></div>
+    </div>
   </body>
 </html>

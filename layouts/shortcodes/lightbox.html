@@ -1,0 +1,9 @@
+<figure class="lightbox-wrapper" style="margin: 2rem 0; text-align: center;">
+    <img src="{{ .Get "src" }}" alt="{{ .Get "alt" }}" class="lightbox-trigger" onclick="openLightbox(this.src, this.alt)" title="Click to expand">
+    
+    {{ if .Get "alt" }}
+        <figcaption style="font-size: 0.85rem; color: #666; margin-top: 0.5rem; font-style: italic;">
+            {{ .Get "alt" }} (Click to expand)
+        </figcaption>
+    {{ end }}
+</figure>

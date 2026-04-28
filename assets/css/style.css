@@ -24,12 +24,13 @@ body {
     display: flex;
     flex-direction: column;
     min-height: 100vh;
+    max-width: 1440px; /* Caps the site width at a standard, readable widescreen size */
+    margin: 0 auto; /* Centers the whole layout on ultrawide monitors */
 }
 
 /* Fluid Padding for Header & Content */
 .site-header {
-    /* Using 'vw' (viewport width) instead of fixed 'rem' means the padding shrinks as the window shrinks */
-    padding: 2rem 5vw 1rem 5vw; 
+    padding: 2rem 5% 1rem 5%; 
     border-bottom: 1px solid #dcd7ce; 
 }
 
@@ -73,8 +74,12 @@ body {
 }
 
 .sidebar {
-    /* Balances the padding so the card isn't massive, and aligns with the fluid header */
-    padding: 3rem 1.5rem 2rem 5vw; 
+    padding: 3rem 1.5rem 2rem 5%; 
+}
+
+.content {
+    padding: 3rem 5%; 
+    min-width: 0; /* Ensures content doesn't overflow on small screens */
 }
 
 /* The Floating Menu Card */
@@ -136,11 +141,6 @@ nav a.active {
 }
 
 
-.content {
-    /* Fluid left/right padding to match the header */
-    padding: 3rem 5vw; 
-}
-
 /* Remove the margin from the first element in your markdown so it aligns perfectly */
 .content h2:first-of-type {
     margin-top: 0;
@@ -149,7 +149,7 @@ nav a.active {
 /* The 'Sheen': Modern Cards for Projects */
 .project-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
     gap: 1.5rem;
     margin-top: 2rem;
 }
@@ -185,4 +185,71 @@ nav a.active {
 /* Clear float after the intro section */
 .content hr {
     clear: both;
+}
+
+/* Blog Post Image Style */
+.lightbox-trigger {
+    cursor: zoom-in;
+    max-width: 100%;
+    height: auto;
+    border-radius: 6px;
+    border: 1px solid #dcd7ce;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.04);
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.lightbox-trigger:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.08);
+}
+
+/* Full Screen Overlay Style */
+.lightbox-overlay {
+    display: none; /* Hidden by default */
+    position: fixed;
+    z-index: 9999;
+    padding-top: 5vh;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(238, 235, 227, 0.95); /* Matches your site's off-white, slightly transparent */
+    backdrop-filter: blur(4px); /* Adds a modern frosted glass effect */
+    overflow: auto;
+}
+
+.lightbox-content {
+    margin: auto;
+    display: block;
+    max-width: 90vw;
+    max-height: 85vh;
+    border-radius: 8px;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.15);
+    cursor: zoom-out;
+}
+
+.lightbox-close {
+    position: absolute;
+    top: 20px;
+    right: 40px;
+    color: var(--lacoste-green);
+    font-size: 40px;
+    font-weight: bold;
+    cursor: pointer;
+    transition: color 0.2s ease;
+}
+
+.lightbox-close:hover {
+    color: #333;
+}
+
+#lightbox-caption {
+    margin: auto;
+    display: block;
+    width: 80%;
+    text-align: center;
+    color: var(--text-main);
+    padding: 15px 0;
+    font-family: 'Montserrat', sans-serif;
+    font-weight: 600;
 }
