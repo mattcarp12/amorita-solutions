@@ -1,0 +1,345 @@
+<style>
+  /* CSS Animations for Edges */
+  .link-animated {
+    stroke-dasharray: 8, 8;
+    animation: flow 1s linear infinite;
+  }
+
+  @keyframes flow {
+    from {
+      stroke-dashoffset: 16;
+    }
+    to {
+      stroke-dashoffset: 0;
+    }
+  }
+
+  /* Node Shadows */
+  .node-shadow {
+    filter: drop-shadow(0px 8px 12px rgba(0, 0, 0, 0.1));
+  }
+
+  /* Cheat Sheet HTML Styles */
+  .note-container {
+    background: #fffef0;
+    border: 1px solid #f2d06b;
+    border-radius: 4px 12px 12px 4px;
+    padding: 20px;
+    box-sizing: border-box;
+
+    height: calc(100% - 4px);
+    width: calc(100% - 4px);
+    margin: 2px;
+
+    overflow: hidden;
+    color: #333;
+    font-family:
+      system-ui,
+      -apple-system,
+      sans-serif;
+  }
+  .note-header {
+    font-weight: 800;
+    font-size: 15px;
+    margin-bottom: 12px;
+    border-bottom: 2px dotted #f2d06b;
+    padding-bottom: 8px;
+    color: #b78d12;
+  }
+  .step-title {
+    font-size: 13px;
+    font-weight: 700;
+    color: #2c3e50;
+    margin-top: 12px;
+  }
+  .step-cmd {
+    font-family: SFMono-Regular, Consolas, monospace;
+    background: #f8f9fa;
+    border: 1px solid #e9ecef;
+    padding: 6px;
+    border-radius: 6px;
+    margin-top: 4px;
+    font-size: 11px;
+    color: #d63384;
+  }
+  .step-desc {
+    font-size: 11px;
+    color: #6c757d;
+    margin-top: 4px;
+    line-height: 1.4;
+  }
+</style>
+
+<div
+  id="diagram-container"
+  style="width: 100%; height: auto; aspect-ratio: 95 / 55; max-height: 80vh; margin: 2rem auto; overflow: hidden;"
+></div>
+
+<script src="https://d3js.org/d3.v7.min.js"></script>
+<script>
+  // 1. Setup Responsive SVG using viewBox
+  const svg = d3
+    .select("#diagram-container")
+    .append("svg")
+    .attr("width", "100%")
+    .attr("height", "100%")
+    // The virtual canvas remains 950x550.
+    .attr("viewBox", "0 0 950 550")
+    .attr("preserveAspectRatio", "xMidYMid meet"); // Proportional scaling
+
+  // 2. Define Arrowhead Markers
+  const defs = svg.append("defs");
+
+  defs
+    .append("marker")
+    .attr("id", "arrow-gray")
+    .attr("viewBox", "0 -5 10 10")
+    .attr("refX", 8)
+    .attr("refY", 0)
+    .attr("markerWidth", 6)
+    .attr("markerHeight", 6)
+    .attr("orient", "auto")
+    .append("path")
+    .attr("fill", "#888")
+    .attr("d", "M0,-5L10,0L0,5");
+
+  defs
+    .append("marker")
+    .attr("id", "arrow-pink")
+    .attr("viewBox", "0 -5 10 10")
+    .attr("refX", 8)
+    .attr("refY", 0)
+    .attr("markerWidth", 6)
+    .attr("markerHeight", 6)
+    .attr("orient", "auto")
+    .append("path")
+    .attr("fill", "#d947ba")
+    .attr("d", "M0,-5L10,0L0,5");
+
+  // 3. Define Data (Fixed inside the 950x550 virtual box)
+  const nodesData = [
+    {
+      id: "upstream",
+      type: "cloud",
+      x: 20,
+      y: 100,
+      label: "☁️ Upstream",
+      sub: "(Official Project)",
+      border: "#ff9933",
+      bg: "#f0f8ff",
+      w: 180,
+      h: 90,
+    },
+    {
+      id: "origin",
+      type: "cloud",
+      x: 380,
+      y: 100,
+      label: "☁️ Origin",
+      sub: "(Your Fork)",
+      border: "#3399ff",
+      bg: "#f0f8ff",
+      w: 180,
+      h: 90,
+    },
+    {
+      id: "local",
+      type: "desktop",
+      x: 180,
+      y: 380,
+      label: "💻 Local Machine",
+      sub: "(main & feature branches)",
+      border: "#4a5568",
+      bg: "#eef2f5",
+      w: 220,
+      h: 100,
+    },
+
+// Change the last item in nodesData to this:
+  { id: "note", type: "note", x: 610, y: 15, w: 320, h: 520 }
+  ];
+
+  const linksData = [
+    {
+      source: "upstream",
+      target: "local",
+      label: "1. Pull / Sync",
+      color: "#888",
+      width: 2,
+      animated: true,
+      marker: "url(#arrow-gray)",
+    },
+    {
+      source: "local",
+      target: "origin",
+      label: "2 & 4. Push Updates",
+      color: "#888",
+      width: 2,
+      animated: true,
+      marker: "url(#arrow-gray)",
+    },
+    {
+      source: "origin",
+      target: "upstream",
+      label: "5. Pull Request",
+      color: "#d947ba",
+      width: 3,
+      animated: false,
+      marker: "url(#arrow-pink)",
+    },
+  ];
+
+  const getNode = (id) => nodesData.find((n) => n.id === id);
+
+  // 4. Draw Edges
+  const links = svg
+    .selectAll(".link-group")
+    .data(linksData)
+    .enter()
+    .append("g")
+    .attr("class", "link-group");
+
+  links
+    .append("path")
+    .attr("class", (d) => (d.animated ? "link-animated" : ""))
+    .attr("fill", "none")
+    .attr("stroke", (d) => d.color)
+    .attr("stroke-width", (d) => d.width)
+    .attr("marker-end", (d) => d.marker)
+    .attr("d", (d) => {
+      const s = getNode(d.source);
+      const t = getNode(d.target);
+
+      const sx = s.x + s.w / 2;
+      const sy = s.y + s.h / 2;
+      const tx = t.x + t.w / 2;
+      const ty = t.y + t.h / 2;
+
+      // PR Curve calculation based on new fixed coordinates
+      if (d.source === "origin" && d.target === "upstream") {
+        return `M ${sx} ${sy - 20} Q 290 20 ${tx} ${ty - 20}`;
+      }
+      return `M ${sx} ${sy} L ${tx} ${ty}`;
+    });
+
+  // Edge Labels
+  links
+    .append("text")
+    .attr("font-size", "13px")
+    .attr("font-weight", "600")
+    .attr("text-anchor", "middle")
+    .attr("x", (d) => {
+      if (d.source === "origin" && d.target === "upstream") return 290;
+      return (
+        (getNode(d.source).x +
+          getNode(d.source).w / 2 +
+          getNode(d.target).x +
+          getNode(d.target).w / 2) /
+        2
+      );
+    })
+    .attr("y", (d) => {
+      if (d.source === "origin" && d.target === "upstream") return 50;
+      return (
+        (getNode(d.source).y +
+          getNode(d.source).h / 2 +
+          getNode(d.target).y +
+          getNode(d.target).h / 2) /
+          2 -
+        10
+      );
+    })
+    .text((d) => d.label)
+
+    // 1. Create the Mask FIRST (draws directly over the path)
+    .attr("fill", "none")
+    .attr("stroke", "var(--bg-color, #eeebe3)")
+    .attr("stroke-width", 18)
+    .attr("stroke-linejoin", "round")
+
+    // 2. Clone the mask, place it ON TOP, and turn it into the readable text
+    .clone(true)
+    .attr("stroke", "none") // Remove the thick stroke from the top layer
+    .attr("fill", (d) => d.color); // Color the text
+
+  // 5. Draw Nodes
+  const nodes = svg
+    .selectAll(".node")
+    .data(nodesData)
+    .enter()
+    .append("g")
+    .attr("class", "node node-shadow")
+    .attr("transform", (d) => `translate(${d.x}, ${d.y})`);
+
+  nodes.each(function (d) {
+    const el = d3.select(this);
+
+    if (d.type === "cloud" || d.type === "desktop") {
+      const isDesktop = d.type === "desktop";
+      el.append("rect")
+        .attr("width", d.w)
+        .attr("height", d.h)
+        .attr("rx", isDesktop ? 8 : 40)
+        .attr("fill", d.bg)
+        .attr("stroke", d.border)
+        .attr("stroke-width", isDesktop ? 3 : 2);
+
+      if (isDesktop) {
+        el.append("rect")
+          .attr("width", d.w)
+          .attr("height", 12)
+          .attr("y", d.h - 12)
+          .attr("rx", 4)
+          .attr("fill", d.border);
+      }
+
+      el.append("text")
+        .attr("x", d.w / 2)
+        .attr("y", d.h / 2)
+        .attr("text-anchor", "middle")
+        .attr("font-size", isDesktop ? "18px" : "16px")
+        .attr("font-weight", "bold")
+        .attr("fill", "#333")
+        .attr("font-family", "system-ui, sans-serif")
+        .text(d.label);
+
+      el.append("text")
+        .attr("x", d.w / 2)
+        .attr("y", d.h / 2 + 20)
+        .attr("text-anchor", "middle")
+        .attr("font-size", "12px")
+        .attr("fill", "#666")
+        .attr("font-family", "system-ui, sans-serif")
+        .text(d.sub);
+    } else if (d.type === "note") {
+      const fo = el
+        .append("foreignObject")
+        .attr("width", d.w)
+        .attr("height", d.h);
+
+      fo.append("xhtml:div").html(`
+          <div class="note-container">
+            <div class="note-header">📝 Triangle Workflow Cheat Sheet</div>
+            <div class="step-title">1. Sync Local (The Bridge)</div>
+            <div class="step-cmd">> git fetch upstream && git rebase upstream/main</div>
+            <div class="step-desc">Pulls the latest official code and replays your local work cleanly on top, avoiding messy merge commits.</div>
+            
+            <div class="step-title">2. Update Fork (Optional)</div>
+            <div class="step-cmd">> git push origin main</div>
+            <div class="step-desc">Keeps your personal GitHub fork's main branch perfectly synced with the official project.</div>
+            
+            <div class="step-title">3. Branch for Work</div>
+            <div class="step-cmd">> git checkout -b feature-name</div>
+            <div class="step-desc">Never work directly on main! Isolate your new code in a dedicated feature branch.</div>
+            
+            <div class="step-title">4. Push Your Branch</div>
+            <div class="step-cmd">> git push -u origin feature-name</div>
+            <div class="step-desc">Uploads your new feature branch to your personal fork.</div>
+            
+            <div class="step-title">5. Propose Changes</div>
+            <div class="step-desc" style="margin-top:8px;">Go to the official project's GitHub page and click <strong>'Compare & Pull Request'</strong> to submit your work.</div>
+          </div>
+        `);
+    }
+  });
+</script>

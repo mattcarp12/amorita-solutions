@@ -4,47 +4,56 @@ config:
   theme: base
   look: classic
 ---
-flowchart TD
-    %% Node Definitions with FontAwesome & Refined HTML
-    subgraph MainFlow ["AWS S3 Storage Class Flowchart"]
-        direction TD
+flowchart TB
+ subgraph MainFlow["AWS S3 Storage Class Flowchart"]
+    direction TB
+        Q1@{ label: "<i class=\"fa-solid fa-circle-question\"></i> How often do you access<br>your data?" }
+        Q2@{ label: "<i class=\"fa-solid fa-chart-line\"></i> Is the access pattern<br>predictable?" }
+        Q3@{ label: "<i class=\"fa-solid fa-server\"></i> Is multi-AZ resilience<br>required?" }
+        Q4@{ label: "<i class=\"fa-solid fa-clock\"></i> How fast must<br>retrieval be?" }
+        S3_STD@{ label: "<div style=\"width: 240px; text-align: left; padding: 5px;\"><span style=\"font-size: 1.1em; font-weight: bold;\"><i class=\"fa-solid fa-bucket\"></i> S3 Standard</span><hr style=\"margin: 8px 0; border-top: 1px solid ﬂ°bbbbbb¶ß\"><b>Cost:</b> $$$ ($0.023/GB)<br><b>Retrieval:</b> ms latency<br><b>Availability:</b> 99.99%<br><b>Min Duration:</b> None<br><br><i>General-purpose active workloads.</i></div>" }
+        S3_INT@{ label: "<div style=\"width: 240px; text-align: left; padding: 5px;\"><span style=\"font-size: 1.1em; font-weight: bold;\"><i class=\"fa-solid fa-brain\"></i> Intelligent-Tiering</span><hr style=\"margin: 8px 0; border-top: 1px solid ﬂ°bbbbbb¶ß\"><b>Cost:</b> $$ (Auto-optimized)<br><b>Retrieval:</b> ms latency<br><b>Availability:</b> 99.9%<br><b>Min Duration:</b> None<br><br><i>Unknown or changing patterns.</i></div>" }
+        S3_SIA@{ label: "<div style=\"width: 240px; text-align: left; padding: 5px;\"><span style=\"font-size: 1.1em; font-weight: bold;\"><i class=\"fa-solid fa-box-archive\"></i> S3 Standard-IA</span><hr style=\"margin: 8px 0; border-top: 1px solid ﬂ°bbbbbb¶ß\"><b>Cost:</b> $$ ($0.0125/GB)<br><b>Retrieval:</b> ms latency<br><b>Availability:</b> 99.9%<br><b>Min Duration:</b> 30 days<br><br><i>Long-lived infrequent data.</i></div>" }
+        S3_OZA@{ label: "<div style=\"width: 240px; text-align: left; padding: 5px;\"><span style=\"font-size: 1.1em; font-weight: bold;\"><i class=\"fa-solid fa-house-signal\"></i> S3 One Zone-IA</span><hr style=\"margin: 8px 0; border-top: 1px solid ﬂ°bbbbbb¶ß\"><b>Cost:</b> $ ($0.01/GB)<br><b>Retrieval:</b> ms latency<br><b>Availability:</b> 99.5%<br><b>Min Duration:</b> 30 days<br><br><i>Non-critical recreatable data.</i></div>" }
+        S3_GIR@{ label: "<div style=\"width: 240px; text-align: left; padding: 5px;\"><span style=\"font-size: 1.1em; font-weight: bold;\"><i class=\"fa-solid fa-snowflake\"></i> Glacier Instant</span><hr style=\"margin: 8px 0; border-top: 1px solid ﬂ°bbbbbb¶ß\"><b>Cost:</b> $ ($0.004/GB)<br><b>Retrieval:</b> ms latency<br><b>Availability:</b> 99.9%<br><b>Min Duration:</b> 90 days<br><br><i>Rare access, instant recovery.</i></div>" }
+        S3_GFR@{ label: "<div style=\"width: 240px; text-align: left; padding: 5px;\"><span style=\"font-size: 1.1em; font-weight: bold;\"><i class=\"fa-solid fa-shuttle-space\"></i> Glacier Flexible</span><hr style=\"margin: 8px 0; border-top: 1px solid ﬂ°bbbbbb¶ß\"><b>Cost:</b> $ ($0.0036/GB)<br><b>Retrieval:</b> Mins - 12 hrs<br><b>Availability:</b> 99.99%<br><b>Min Duration:</b> 90 days<br><br><i>Backup &amp; Disaster Recovery.</i></div>" }
+        S3_GDA@{ label: "<div style=\"width: 240px; text-align: left; padding: 5px;\"><span style=\"font-size: 1.1em; font-weight: bold;\"><i class=\"fa-solid fa-vault\"></i> Glacier Deep Archive</span><hr style=\"margin: 8px 0; border-top: 1px solid ﬂ°bbbbbb¶ß\"><b>Cost:</b> ¢ ($0.00099/GB)<br><b>Retrieval:</b> 12 - 48 hrs<br><b>Availability:</b> 99.99%<br><b>Min Duration:</b> 180 days<br><br><i>Compliance &amp; 7-10yr retention.</i></div>" }
+  end
+    Q1 -- Active / Unknown --> Q2
+    Q1 -- Infrequently --> Q3
+    Q1 -- Rarely (Archive) --> Q4
+    Q2 -- Predictable --> S3_STD
+    Q2 -- Unpredictable --> S3_INT
+    Q3 -- "Yes (Multi-AZ)" --> S3_SIA
+    Q3 -- "No (Single-AZ)" --> S3_OZA
+    Q4 -- Milliseconds --> S3_GIR
+    Q4 -- "Mins - Hours" --> S3_GFR
+    Q4 -- 12+ Hours --> S3_GDA
 
-        Q1["<i class='fa-solid fa-circle-question'></i> How often do you access<br/>your data?"]:::decision
-        Q2["<i class='fa-solid fa-gauge-high'></i> Do you need millisecond<br/>latency on retrieval?"]:::decision
-        Q3["<i class='fa-solid fa-clock'></i> How fast do you<br/>need retrieval?"]:::decision
-
-        S3_STD["<div style='width: 240px; text-align: left; padding: 5px;'><span style='font-size: 1.1em; font-weight: bold;'><i class='fa-solid fa-bucket'></i> S3 Standard</span><hr style='margin: 8px 0; border-top: 1px solid #bbbbbb;'/><b>Cost:</b> $$$ ($0.023/GB)<br/><b>Retrieval:</b> ms latency<br/><b>Availability:</b> 99.99%<br/><br/><i>General-purpose active workloads.</i></div>"]:::standard
-        
-        S3_INT["<div style='width: 240px; text-align: left; padding: 5px;'><span style='font-size: 1.1em; font-weight: bold;'><i class='fa-solid fa-brain'></i> Intelligent-Tiering</span><hr style='margin: 8px 0; border-top: 1px solid #bbbbbb;'/><b>Cost:</b> $$ (Auto-optimized)<br/><b>Retrieval:</b> ms latency<br/><b>Availability:</b> 99.9%<br/><br/><i>Unknown or changing patterns.</i></div>"]:::intelligent
-        
-        S3_SIA["<div style='width: 240px; text-align: left; padding: 5px;'><span style='font-size: 1.1em; font-weight: bold;'><i class='fa-solid fa-box-archive'></i> S3 Standard-IA</span><hr style='margin: 8px 0; border-top: 1px solid #bbbbbb;'/><b>Cost:</b> $$ ($0.0125/GB)<br/><b>Retrieval:</b> ms latency<br/><b>Availability:</b> 99.9%<br/><br/><i>Long-lived infrequent data.</i></div>"]:::ia
-        
-        S3_OZA["<div style='width: 240px; text-align: left; padding: 5px;'><span style='font-size: 1.1em; font-weight: bold;'><i class='fa-solid fa-house-signal'></i> S3 One Zone-IA</span><hr style='margin: 8px 0; border-top: 1px solid #bbbbbb;'/><b>Cost:</b> $ ($0.01/GB)<br/><b>Retrieval:</b> ms latency<br/><b>Availability:</b> 99.5%<br/><br/><i>Non-critical recreatable data.</i></div>"]:::ia
-        
-        S3_GIR["<div style='width: 240px; text-align: left; padding: 5px;'><span style='font-size: 1.1em; font-weight: bold;'><i class='fa-solid fa-snowflake'></i> Glacier Instant</span><hr style='margin: 8px 0; border-top: 1px solid #bbbbbb;'/><b>Cost:</b> $ ($0.004/GB)<br/><b>Retrieval:</b> ms latency<br/><b>Availability:</b> 99.9%<br/><br/><i>Rare access, instant recovery.</i></div>"]:::archive
-        
-        S3_GFR["<div style='width: 240px; text-align: left; padding: 5px;'><span style='font-size: 1.1em; font-weight: bold;'><i class='fa-solid fa-shuttle-space'></i> Glacier Flexible</span><hr style='margin: 8px 0; border-top: 1px solid #bbbbbb;'/><b>Cost:</b> $ ($0.0036/GB)<br/><b>Retrieval:</b> Mins - 12 hrs<br/><b>Availability:</b> 99.99%<br/><br/><i>Backup & Disaster Recovery.</i></div>"]:::archive
-        
-        S3_GDA["<div style='width: 240px; text-align: left; padding: 5px;'><span style='font-size: 1.1em; font-weight: bold;'><i class='fa-solid fa-vault'></i> Glacier Deep Archive</span><hr style='margin: 8px 0; border-top: 1px solid #bbbbbb;'/><b>Cost:</b> ¢ ($0.00099/GB)<br/><b>Retrieval:</b> 12 - 48 hrs<br/><b>Availability:</b> 99.99%<br/><br/><i>Compliance & 7-10yr retention.</i></div>"]:::archive
-    end
-
-    %% Flow Logic
-    Q1 -- Frequently --> S3_STD
-    Q1 -- Unpredictable --> S3_INT
-    Q1 -- Infrequently --> Q2
-
-    Q2 -- "Multi-AZ" --> S3_SIA
-    Q2 -- "Single-AZ" --> S3_OZA
-    Q2 -- "Rare/Instant" --> S3_GIR
-    Q2 -- "Deep Archive" --> Q3
-
-    Q3 -- Milliseconds --> S3_GIR
-    Q3 -- "Mins - Hours" --> S3_GFR
-    Q3 -- "12+ Hours" --> S3_GDA
-
-    %% Styling Classes
-    classDef decision fill:#232f3e,stroke:#ff9900,stroke-width:2px,color:#ffffff,font-family:'Montserrat',sans-serif;
-    classDef standard fill:#eef5ec,stroke:#8db287,stroke-width:2px,color:#333333;
-    classDef intelligent fill:#fdf8e7,stroke:#d4c48c,stroke-width:2px,color:#333333;
-    classDef ia fill:#fcedec,stroke:#db9b9b,stroke-width:2px,color:#333333;
-    classDef archive fill:#eff4fc,stroke:#9fb2d6,stroke-width:2px,color:#333333;
+    Q1@{ shape: rect}
+    Q2@{ shape: rect}
+    Q3@{ shape: rect}
+    Q4@{ shape: rect}
+    S3_STD@{ shape: rect}
+    S3_INT@{ shape: rect}
+    S3_SIA@{ shape: rect}
+    S3_OZA@{ shape: rect}
+    S3_GIR@{ shape: rect}
+    S3_GFR@{ shape: rect}
+    S3_GDA@{ shape: rect}
+     Q1:::decision
+     Q2:::decision
+     Q3:::decision
+     Q4:::decision
+     S3_STD:::standard
+     S3_INT:::intelligent
+     S3_SIA:::ia
+     S3_OZA:::ia
+     S3_GIR:::archive
+     S3_GFR:::archive
+     S3_GDA:::archive
+    classDef decision fill:#232f3e,stroke:#ff9900,stroke-width:2px,color:#ffffff,font-family:'Montserrat',sans-serif
+    classDef standard fill:#eef5ec,stroke:#8db287,stroke-width:2px,color:#333333
+    classDef intelligent fill:#fdf8e7,stroke:#d4c48c,stroke-width:2px,color:#333333
+    classDef ia fill:#fcedec,stroke:#db9b9b,stroke-width:2px,color:#333333
+    classDef archive fill:#eff4fc,stroke:#9fb2d6,stroke-width:2px,color:#333333

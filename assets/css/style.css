@@ -24,8 +24,9 @@ body {
     display: flex;
     flex-direction: column;
     min-height: 100vh;
-    max-width: 1440px; /* Caps the site width at a standard, readable widescreen size */
-    margin: 0 auto; /* Centers the whole layout on ultrawide monitors */
+    max-width: 2560px; /* Increased from 1440px to utilize 4K real estate */
+    width: 92%; /* Fluid width with some padding on the sides */
+    margin: 0 auto; 
 }
 
 /* Fluid Padding for Header & Content */
