@@ -1,5 +1,0 @@
-+++
-date = '2026-04-19T22:20:26Z'
-draft = true
-title = 'First Post'
-+++
