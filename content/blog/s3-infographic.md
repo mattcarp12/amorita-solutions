@@ -5,9 +5,9 @@ title = 'Which S3 Storage Class should you choose?'
 summary = 'A comparison of the S3 storage class options'
 +++
 
-### Use this flowchart to help you decide which S3 storage class to use
 
-{{< lightbox src="/img/s3-flow-2.webp" alt="AWS S3 Storage Class Flowchart" >}}
+
+<!-- {{< lightbox src="/img/s3-flow-2.webp" alt="AWS S3 Storage Class Flowchart" >}} -->
 
 ### S3 Core Concepts
 
@@ -34,3 +34,7 @@ You are billed across several dimensions:
 #### Minimum Storage Durations
 
 Some storage classes require a minimum commitment (e.g., 30 days for Standard-IA, 90 days for Glacier Instant, 180 days for Deep Archive). **The Gotcha:** If you delete, overwrite, or transition an object *before* the minimum duration ends, **you are still billed for the remaining days**. 
+
+### Use this flowchart to help you decide which S3 storage class to use:
+
+{{<s3-flow>}}

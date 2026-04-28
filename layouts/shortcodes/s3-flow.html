@@ -1,0 +1,181 @@
+<div id="s3-diagram-container" style="width: 100%; height: auto; margin: 2rem auto; overflow: hidden;"></div>
+
+<script src="https://d3js.org/d3.v7.min.js"></script>
+<script>
+  // 1. Setup Responsive SVG using viewBox
+  const svg = d3.select("#s3-diagram-container")
+    .append("svg")
+    .attr("width", "100%")
+    .attr("height", "100%")
+    .attr("viewBox", "0 0 1050 1200") 
+    .attr("preserveAspectRatio", "xMidYMid meet");
+
+  // Add styles for the HTML nodes
+  svg.append("style").text(`
+    .d3-node {
+      box-sizing: border-box;
+      border-radius: 8px;
+      padding: 12px;
+      font-family: system-ui, -apple-system, sans-serif;
+      box-shadow: 0 4px 6px rgba(0,0,0,0.06);
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      
+      /* THE HOVER FIX: 
+         1. Make the box slightly smaller than the 100% SVG window 
+         2. Add a smooth transition matching your site's .card style */
+      width: calc(100% - 8px);
+      height: calc(100% - 8px);
+      margin: 4px;
+      transition: transform 0.2s ease, box-shadow 0.2s ease;
+      cursor: default;
+    }
+    
+    /* The "Pop" Effect */
+    .d3-node:hover {
+      transform: translateY(-3px) scale(1.02);
+      box-shadow: 0 8px 16px rgba(0,0,0,0.12);
+      z-index: 10;
+    }
+
+    /* Node Types Mapping */
+    .node-decision { background: #232f3e; border: 2px solid #ff9900; color: #ffffff; text-align: center; font-weight: 600; font-size: 14px;}
+    .node-standard { background: #eef5ec; border: 2px solid #8db287; color: #333333; }
+    .node-intelligent { background: #fdf8e7; border: 2px solid #d4c48c; color: #333333; }
+    .node-ia { background: #fcedec; border: 2px solid #db9b9b; color: #333333; }
+    .node-archive { background: #eff4fc; border: 2px solid #9fb2d6; color: #333333; }
+    
+    /* Storage Class Inner HTML Styling */
+    .sc-header { font-size: 1.1em; font-weight: bold; margin-bottom: 6px; }
+    .sc-divider { border-top: 1px solid #bbbbbb; margin: 6px 0; }
+    .sc-details { font-size: 12px; line-height: 1.4; margin-bottom: 6px; }
+    .sc-desc { font-size: 11px; font-style: italic; color: #555; }
+  `);
+
+  // 2. Define Arrowhead Marker
+  svg.append("defs").append("marker")
+    .attr("id", "arrow-gray")
+    .attr("viewBox", "0 -5 10 10")
+    .attr("refX", 8)
+    .attr("refY", 0)
+    .attr("markerWidth", 5)
+    .attr("markerHeight", 5)
+    .attr("orient", "auto")
+    .append("path")
+    .attr("fill", "#888")
+    .attr("d", "M0,-5L10,0L0,5");
+
+  // 3. Define Manual Node Layout
+  const nodesData = [
+    { id: "q1", type: "decision", x: 20, y: 490, w: 200, h: 80, label: "❓ How often do you access<br>your data?" },
+    { id: "q2", type: "decision", x: 380, y: 130, w: 200, h: 80, label: "📈 Is the access pattern<br>predictable?" },
+    { id: "q3", type: "decision", x: 380, y: 450, w: 200, h: 80, label: "🗄️ Is multi-AZ resilience<br>required?" },
+    { id: "q4", type: "decision", x: 380, y: 850, w: 200, h: 80, label: "⏱️ How fast must<br>retrieval be?" },
+    { id: "s3_std", type: "standard", x: 750, y: 50, w: 240, h: 145, title: "🪣 S3 Standard", cost: "$$$ ($0.023/GB)", ret: "ms latency", avail: "99.99%", dur: "None", desc: "General-purpose active workloads." },
+    { id: "s3_int", type: "intelligent", x: 750, y: 210, w: 240, h: 145, title: "🧠 Intelligent-Tiering", cost: "$$ (Auto-optimized)", ret: "ms latency", avail: "99.9%", dur: "None", desc: "Unknown or changing patterns." },
+    { id: "s3_sia", type: "ia", x: 750, y: 370, w: 240, h: 145, title: "📦 S3 Standard-IA", cost: "$$ ($0.0125/GB)", ret: "ms latency", avail: "99.9%", dur: "30 days", desc: "Long-lived infrequent data." },
+    { id: "s3_oza", type: "ia", x: 750, y: 530, w: 240, h: 145, title: "🏚️ S3 One Zone-IA", cost: "$ ($0.01/GB)", ret: "ms latency", avail: "99.5%", dur: "30 days", desc: "Non-critical recreatable data." },
+    { id: "s3_gir", type: "archive", x: 750, y: 690, w: 240, h: 145, title: "❄️ Glacier Instant", cost: "$ ($0.004/GB)", ret: "ms latency", avail: "99.9%", dur: "90 days", desc: "Rare access, instant recovery." },
+    { id: "s3_gfr", type: "archive", x: 750, y: 850, w: 240, h: 145, title: "🚀 Glacier Flexible", cost: "$ ($0.0036/GB)", ret: "Mins - 12 hrs", avail: "99.99%", dur: "90 days", desc: "Backup & Disaster Recovery." },
+    { id: "s3_gda", type: "archive", x: 750, y: 1010, w: 240, h: 145, title: "🏦 Glacier Deep Archive", cost: "¢ ($0.00099/GB)", ret: "12 - 48 hrs", avail: "99.99%", dur: "180 days", desc: "Compliance & 7-10yr retention." }
+  ];
+
+  const linksData = [
+    { source: "q1", target: "q2", label: "Active / Unknown" },
+    { source: "q1", target: "q3", label: "Infrequently" },
+    { source: "q1", target: "q4", label: "Rarely (Archive)" },
+    { source: "q2", target: "s3_std", label: "Predictable" },
+    { source: "q2", target: "s3_int", label: "Unpredictable" },
+    { source: "q3", target: "s3_sia", label: "Yes (Multi-AZ)" },
+    { source: "q3", target: "s3_oza", label: "No (Single-AZ)" },
+    { source: "q4", target: "s3_gir", label: "Milliseconds" },
+    { source: "q4", target: "s3_gfr", label: "Mins - Hours" },
+    { source: "q4", target: "s3_gda", label: "12+ Hours" }
+  ];
+
+  const getNode = id => nodesData.find(n => n.id === id);
+
+  // 4. Draw Edges (Links)
+  const links = svg.selectAll(".link-group")
+    .data(linksData)
+    .enter().append("g");
+
+  links.append("path")
+    .attr("fill", "none")
+    .attr("stroke", "#aaa")
+    .attr("stroke-width", 2)
+    .attr("marker-end", "url(#arrow-gray)")
+    .attr("d", d => {
+      const s = getNode(d.source);
+      const t = getNode(d.target);
+      
+      const startX = s.x + s.w; 
+      const startY = s.y + (s.h / 2);
+      const endX = t.x - 4; 
+      const endY = t.y + (t.h / 2);
+
+      const midX = (startX + endX) / 2;
+      return `M ${startX} ${startY} C ${midX} ${startY}, ${midX} ${endY}, ${endX} ${endY}`;
+    });
+
+  // Edge Labels
+  links.append("text")
+    .attr("font-size", "12px")
+    .attr("font-family", "system-ui, sans-serif")
+    .attr("fill", "#555")
+    .attr("text-anchor", "middle")
+    .attr("x", d => {
+      const s = getNode(d.source);
+      const t = getNode(d.target);
+      return (s.x + s.w + t.x) / 2;
+    })
+    .attr("y", d => {
+      const s = getNode(d.source);
+      const t = getNode(d.target);
+      return ((s.y + s.h / 2) + (t.y + t.h / 2)) / 2 - 8;
+    })
+    .text(d => d.label)
+    .clone(true)
+    .attr("fill", "none")
+    .attr("stroke", "var(--bg-color, #eeebe3)") 
+    .attr("stroke-width", 14)
+    .attr("stroke-linejoin", "round")
+    .clone(true)
+    .attr("stroke", "none")
+    .attr("fill", "#555");
+
+  // 5. Draw Nodes
+  const nodes = svg.selectAll(".node")
+    .data(nodesData)
+    .enter().append("g")
+    .attr("transform", d => `translate(${d.x}, ${d.y})`);
+
+  nodes.each(function(d) {
+    const el = d3.select(this);
+    
+    const fo = el.append("foreignObject")
+      .attr("width", d.w)
+      .attr("height", d.h);
+
+    if (d.type === "decision") {
+      fo.append("xhtml:div")
+        .attr("class", `d3-node node-${d.type}`)
+        .html(d.label);
+    } else {
+      fo.append("xhtml:div")
+        .attr("class", `d3-node node-${d.type}`)
+        .html(`
+          <div class="sc-header">${d.title}</div>
+          <div class="sc-divider"></div>
+          <div class="sc-details">
+            <b>Cost:</b> ${d.cost}<br>
+            <b>Retrieval:</b> ${d.ret}<br>
+            <b>Availability:</b> ${d.avail}<br>
+            <b>Min Duration:</b> ${d.dur}
+          </div>
+          <div class="sc-desc">${d.desc}</div>
+        `);
+    }
+  });
+</script>
