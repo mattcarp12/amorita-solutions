@@ -7,4 +7,4 @@ summary = 'A comparison of the S3 storage class options'
 
 Here is a breakdown of the AWS S3 Storage classes. 
 
-{{< lightbox src="/img/s3-flowchart.jpg" alt="AWS S3 Storage Class Flowchart" >}}
+{{< lightbox src="/img/s3-flow.jpg" alt="AWS S3 Storage Class Flowchart" >}}
